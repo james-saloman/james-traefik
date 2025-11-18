@@ -1,0 +1,21 @@
+# Dynamic configuration
+---
+  # TLS Configuration
+  tls:
+    stores:
+      default:
+        defaultCertificate:
+          certFile: /etc/traefik/certs/public.crt
+          keyFile: /etc/traefik/certs/private.key
+    options:
+      default:
+        sniStrict: false
+  
+  # Redirect to https
+  http:
+    middlewares:
+      redirect-to-https:
+        redirectScheme:
+          scheme: https
+          port: 443
+  

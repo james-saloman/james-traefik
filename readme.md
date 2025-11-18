@@ -1,3 +1,6 @@
 ### Traefik
 
 This repository provides a docker-compose stack that creates a Traefik Reverse Proxy. The Traefik Reverse Proxy is configured to use a traefik based certificate for the localtest.me domain. This allows you to easily add containers to the proxy and access them at https://<container-name>.localtest.me/.
+
+## Notes
+By using this all the HTTP requests are routed through :80 and HTTPS requests are through :443

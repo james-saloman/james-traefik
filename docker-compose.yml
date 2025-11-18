@@ -1,0 +1,34 @@
+  services:
+    proxy:
+      image: traefik:2.10
+      restart: unless-stopped
+      ports:
+        - 8080:8080 # HTTP
+        - 8443:8443 # HTTPS
+        - 7687:7687 # Neo4j
+        - 1433:1433 # MSSQL
+        - 3306:3306 # MySQL
+        - 5432:5432 # PostgreSQL
+      volumes:
+        - /var/run/docker.sock:/var/run/docker.sock:ro
+      environment:  
+        TRAEFIK_API_DASHBOARD: "true"
+        TRAEFIK_ENTRYPOINTS_WEB_ADDRESS: ":8080"
+        TRAEFIK_ENTRYPOINTS_WEBSECURE_ADDRESS: ":8443"
+        TRAEFIK_PROVIDERS_DOCKER: "true"
+        TRAEFIK_PROVIDERS_DOCKER_EXPOSEDBYDEFAULT: "false"
+        TRAEFIK_PROVIDERS_DOCKER_DEFAULTRULE: "Host(`{{ or (index .Labels \"traefik.hostname\") (index .Labels \"com.docker.compose.service\") .Name }}.localtest.me`)"
+        TRAEFIK_PROVIDERS_DOCKER_ALLOWEMPTYSERVICES: "true"
+        TRAEFIK_PROVIDERS_DOCKER_NETWORK: "proxy"
+        TRAEFIK_LOG_LEVEL: "DEBUG"
+      labels:
+        traefik.http.routers.api.rule: "Host(`proxy.localtest.me`)"
+        traefik.http.routers.api.service: "api@internal"
+        traefik.http.routers.api.entrypoints: "websecure"
+        traefik.http.routers.api.tls: "true"
+        traefik.enable: "true"
+        traefik.hostname: "proxy"
+    
+    networks:
+      default:
+        name: proxy
